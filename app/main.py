@@ -1,5 +1,8 @@
+import os
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
 from slowapi import _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
 
@@ -24,10 +27,28 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Route prefixes for Auth & Catalog APIs (supports /catalog, /api/catalog, and /api/products)
 app.include_router(auth.router, prefix="/auth", tags=["auth"])
+app.include_router(auth.router, prefix="/api/auth", tags=["auth"])
+
 app.include_router(catalog.router, prefix="/catalog", tags=["catalog"])
+app.include_router(catalog.router, prefix="/api/catalog", tags=["catalog"])
+app.include_router(catalog.router, prefix="/api", tags=["catalog"])
+
+# Mount static directory for uploads and staff portal
+static_dir = os.path.join(os.path.dirname(__file__), "static")
+if os.path.exists(static_dir):
+    app.mount("/static", StaticFiles(directory=static_dir), name="static")
 
 
 @app.get("/health")
 def health():
     return {"status": "ok"}
+
+
+@app.get("/staff")
+def staff_page():
+    html_path = os.path.join(static_dir, "staff.html")
+    if os.path.exists(html_path):
+        return FileResponse(html_path)
+    return {"message": "Staff UI template not found"}

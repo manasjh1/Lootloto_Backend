@@ -160,10 +160,31 @@ async def list_products(
     res = query.execute()
 
     items = res.data or []
-    # Sort images inside each product by sort_order & is_primary
+    # Sort images and populate frontend compatibility fields
     for item in items:
         if "images" in item and item["images"]:
             item["images"] = sorted(item["images"], key=lambda x: (not x.get("is_primary", False), x.get("sort_order", 0)))
+
+        primary_img = None
+        if "images" in item and item["images"]:
+            primary = next((img for img in item["images"] if img.get("is_primary")), item["images"][0])
+            primary_img = primary.get("url")
+
+        item["id"] = item.get("uuid")
+        item["title"] = item.get("name")
+        item["price"] = float(item.get("selling_price", 0))
+        item["original_price"] = float(item["compare_price"]) if item.get("compare_price") is not None else None
+        item["image_url"] = primary_img
+        item["image"] = primary_img
+
+        if item.get("compare_price") and float(item["compare_price"]) > float(item.get("selling_price", 0)):
+            pct = int(round((1 - float(item["selling_price"]) / float(item["compare_price"])) * 100))
+            item["badge"] = f"{pct}% OFF 📉"
+        elif item.get("status") == "LOW_STOCK":
+            item["badge"] = "LIMITED STOCK ⚡"
+        else:
+            item["badge"] = "NEW ✨"
+
 
     total_count = res.count if res.count is not None else len(items)
     total_pages = (total_count + limit - 1) // limit if limit > 0 else 1
