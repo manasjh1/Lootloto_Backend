@@ -1,0 +1,947 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>LootLooto · Staff Catalog Portal</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --color-bg: #f8fafc;
+            --color-text: #0f172a;
+            --color-neutral-100: #ffffff;
+            --color-neutral-200: #e2e8f0;
+            --color-neutral-300: #cbd5e1;
+            --color-neutral-600: #475569;
+            --color-neutral-700: #334155;
+            --color-accent: #6366f1;
+            --color-accent-600: #4f46e5;
+            --color-accent-700: #4338ca;
+            --color-accent-800: #3730a3;
+            --color-accent-2: #0284c7;
+            --color-accent-2-200: #e0f2fe;
+            --color-accent-2-800: #075985;
+            --color-accent-200: #e0e7ff;
+            --font-heading: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            --space-2: 8px;
+            --space-3: 12px;
+            --space-4: 16px;
+            --space-5: 20px;
+            --space-6: 24px;
+            --space-8: 32px;
+            --space-10: 40px;
+            --radius-md: 8px;
+            --radius-lg: 16px;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.05);
+            --shadow-lg: -10px 0 30px rgba(0,0,0,0.15);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { background: var(--color-bg); color: var(--color-text); font-family: var(--font-body); margin: 0; }
+        a { color: var(--color-accent-700); text-decoration: none; }
+        a:hover { color: var(--color-accent-800); }
+
+        .page { max-width: 1180px; margin: 0 auto; padding: var(--space-6) var(--space-6) var(--space-10); }
+        .top { display: flex; align-items: center; justify-content: space-between; padding: var(--space-4) 0 var(--space-6); }
+        .brand { display: flex; align-items: center; gap: var(--space-3); }
+        .brand-mark { width: 44px; height: 44px; border-radius: 999px; background: var(--color-accent); color: var(--color-neutral-100); display: grid; place-items: center; font-family: var(--font-heading); font-size: 20px; font-weight: 800; }
+        .brand-title { font-family: var(--font-heading); font-size: 22px; font-weight: 700; line-height: 1; }
+        .brand-sub { font-size: 13px; color: var(--color-neutral-600); margin-top: 4px; }
+        .top-right { display: flex; align-items: center; gap: var(--space-3); }
+
+        .tag { padding: 4px 10px; border-radius: 999px; font-size: 12px; font-weight: 600; text-transform: uppercase; }
+        .tag-accent-2 { background: var(--color-accent-2-200); color: var(--color-accent-2-800); }
+        .tag-outline { border: 1px solid var(--color-neutral-300); color: var(--color-neutral-700); font-size: 11px; }
+
+        .h-hero { display: flex; align-items: baseline; justify-content: space-between; gap: var(--space-6); margin-bottom: var(--space-6); }
+        .h1 { font-family: var(--font-heading); font-size: 44px; font-weight: 800; line-height: 1.05; margin: 0; }
+        .h-sub { color: var(--color-neutral-600); font-size: 15px; max-width: 42ch; margin-top: 6px; }
+
+        .chips { display: flex; gap: var(--space-2); flex-wrap: wrap; margin-bottom: var(--space-5); align-items: center; }
+        .chip { padding: 8px 14px; border-radius: 999px; background: transparent; border: 1px solid var(--color-neutral-300); font: inherit; font-size: 14px; color: var(--color-text); cursor: pointer; transition: all 0.2s ease; }
+        .chip[aria-pressed="true"] { background: var(--color-accent); color: var(--color-neutral-100); border-color: var(--color-accent); }
+        .chip.warn { color: var(--color-accent-800); border-color: var(--color-accent-300); }
+
+        .toolbar { display: flex; gap: var(--space-3); align-items: center; margin-bottom: var(--space-4); }
+        .search { flex: 1; }
+
+        .catalog { border-radius: var(--radius-lg); background: var(--color-neutral-100); box-shadow: var(--shadow-sm); border: 1px solid var(--color-neutral-200); overflow: hidden; }
+        .row { display: grid; grid-template-columns: 72px 1fr 160px 120px 90px 110px 120px; gap: var(--space-4); align-items: center; padding: var(--space-4) var(--space-5); border-bottom: 1px solid var(--color-neutral-200); }
+        .row.head { background: #f1f5f9; padding-top: var(--space-3); padding-bottom: var(--space-3); font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--color-neutral-600); }
+        .row:last-child { border-bottom: 0; }
+        .thumb { width: 56px; height: 56px; border-radius: var(--radius-md); background: var(--color-accent-2-200); display: grid; place-items: center; overflow: hidden; border: 1px solid var(--color-neutral-200); }
+        .thumb img { width: 100%; height: 100%; object-fit: cover; }
+        .p-name { font-weight: 600; font-size: 0.95rem; }
+        .p-sku { font-size: 12px; color: var(--color-neutral-600); margin-top: 3px; }
+        .price { font-family: var(--font-heading); font-weight: 700; }
+        .row-actions { display: flex; gap: 6px; justify-content: flex-end; }
+
+        /* Side Sheet */
+        .backdrop { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.5); backdrop-filter: blur(4px); opacity: 0; pointer-events: none; transition: opacity .25s ease; z-index: 40; }
+        .backdrop.open { opacity: 1; pointer-events: auto; }
+        .sheet { position: fixed; top: 0; right: 0; height: 100vh; width: min(580px, 96vw); background: var(--color-neutral-100); box-shadow: var(--shadow-lg); transform: translateX(105%); transition: transform .28s cubic-bezier(0.16, 1, 0.3, 1); z-index: 50; display: flex; flex-direction: column; border-top-left-radius: var(--radius-lg); border-bottom-left-radius: var(--radius-lg); }
+        .sheet.open { transform: translateX(0); }
+        .sheet-head { padding: var(--space-5) var(--space-6) var(--space-3); display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); border-bottom: 1px solid var(--color-neutral-200); }
+        .sheet-title { font-family: var(--font-heading); font-size: 22px; font-weight: 700; margin: 0; }
+        .close { background: transparent; border: 0; width: 36px; height: 36px; border-radius: 999px; cursor: pointer; display: grid; place-items: center; color: var(--color-text); font-size: 16px; }
+        .close:hover { background: var(--color-neutral-200); }
+
+        .tabs { display: flex; gap: 6px; padding: 12px var(--space-6); flex-wrap: wrap; border-bottom: 1px solid var(--color-neutral-200); background: #f8fafc; }
+        .tab { padding: 6px 12px; border-radius: 999px; background: transparent; border: 1px solid var(--color-neutral-300); font: inherit; font-size: 13px; font-weight: 500; cursor: pointer; color: var(--color-text); }
+        .tab[aria-selected="true"] { background: var(--color-accent-2); color: var(--color-neutral-100); border-color: var(--color-accent-2); font-weight: 600; }
+
+        .sheet-body { flex: 1; overflow-y: auto; padding: var(--space-5) var(--space-6) var(--space-6); }
+        .pane { display: none; }
+        .pane.active { display: block; }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-4); }
+        .field { display: flex; flex-direction: column; gap: 6px; margin-bottom: var(--space-4); }
+        .field label { font-size: 13px; font-weight: 600; color: var(--color-neutral-700); }
+        .req { color: var(--color-accent); }
+        .input, textarea.input, select.input { width: 100%; padding: 10px 14px; border-radius: 999px; border: 1px solid var(--color-neutral-300); background: var(--color-neutral-100); font: inherit; color: var(--color-text); box-sizing: border-box; outline: none; }
+        textarea.input { border-radius: var(--radius-md); min-height: 88px; resize: vertical; }
+        .input:focus-visible, textarea.input:focus-visible, select.input:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 1px; }
+
+        .switch { display: flex; align-items: center; gap: var(--space-3); margin-top: 4px; }
+        .toggle { position: relative; width: 44px; height: 26px; border-radius: 999px; background: var(--color-accent-2); cursor: pointer; }
+        .toggle::after { content: ""; position: absolute; top: 3px; left: 21px; width: 20px; height: 20px; border-radius: 999px; background: var(--color-neutral-100); transition: left .18s; }
+        .toggle.off { background: var(--color-neutral-300); }
+        .toggle.off::after { left: 3px; }
+
+        .sheet-foot { padding: var(--space-4) var(--space-6); border-top: 1px solid var(--color-neutral-200); display: flex; gap: var(--space-3); justify-content: space-between; align-items: center; background: var(--color-neutral-100); }
+        .foot-nav { display: flex; gap: var(--space-2); }
+        .btn { padding: 8px 18px; border-radius: 999px; border: 1px solid var(--color-neutral-300); background: transparent; font: inherit; font-size: 14px; font-weight: 500; cursor: pointer; color: var(--color-text); transition: all 0.15s ease; }
+        .btn:hover { background: var(--color-neutral-200); }
+        .btn-primary { background: var(--color-accent); color: var(--color-neutral-100); border-color: var(--color-accent); font-weight: 600; }
+        .btn-primary:hover { background: var(--color-accent-600); border-color: var(--color-accent-600); }
+        .btn-ghost { border-color: transparent; }
+        .btn-danger { color: var(--color-neutral-100); background: #b04a3e; border-color: #b04a3e; }
+        .btn-danger:hover { background: #964034; border-color: #964034; }
+        .kicker { font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--color-accent-700); margin-bottom: 4px; }
+        .status-tag { padding: 4px 10px; border-radius: 999px; font-size: 12px; font-weight: 600; background: var(--color-accent-2-200); color: var(--color-accent-2-800); display: inline-block; }
+        .status-tag.low { background: var(--color-accent-200); color: var(--color-accent-800); }
+
+        .img-list { display: flex; gap: var(--space-3); flex-wrap: wrap; margin-top: var(--space-3); }
+        .img-tile { width: 90px; height: 90px; border-radius: var(--radius-md); overflow: hidden; position: relative; background: var(--color-accent-2-200); border: 1px solid var(--color-neutral-300); }
+        .img-tile img { width: 100%; height: 100%; object-fit: cover; }
+        .img-tile .badge { position: absolute; top: 4px; left: 4px; font-size: 9px; font-weight: 800; padding: 2px 6px; border-radius: 999px; background: var(--color-accent); color: var(--color-neutral-100); }
+        .img-tile .rm { position: absolute; top: 4px; right: 4px; width: 22px; height: 22px; border-radius: 999px; border: 0; background: rgba(0,0,0,0.7); color: white; cursor: pointer; font-size: 11px; display: grid; place-items: center; }
+        .empty { padding: var(--space-8) var(--space-6); text-align: center; color: var(--color-neutral-600); }
+        .foot-hint { font-size: 12px; color: var(--color-neutral-600); }
+
+        /* Modal Overlay */
+        .modal-overlay { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; z-index: 100; opacity: 0; pointer-events: none; transition: opacity .2s ease; }
+        .modal-overlay.active { opacity: 1; pointer-events: auto; }
+        .modal-box { background: var(--color-neutral-100); border-radius: var(--radius-lg); width: 100%; max-width: 420px; padding: 28px; box-shadow: var(--shadow-lg); border: 1px solid var(--color-neutral-200); }
+        .modal-title { font-family: var(--font-heading); font-size: 20px; font-weight: 700; margin-bottom: 16px; }
+
+        /* Toast Container */
+        #toast-container { position: fixed; bottom: 24px; right: 24px; display: flex; flex-direction: column; gap: 10px; z-index: 1000; }
+        .toast { background: var(--color-text); color: var(--color-neutral-100); padding: 12px 20px; border-radius: var(--radius-md); font-size: 14px; box-shadow: var(--shadow-lg); animation: slideIn 0.25s forwards; }
+        .toast.success { border-left: 4px solid var(--color-accent); }
+        .toast.error { border-left: 4px solid #b04a3e; }
+        @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+
+        @media (max-width: 780px) {
+            .row { grid-template-columns: 56px 1fr 90px 100px; }
+            .row .col-cat, .row .col-status, .row .col-stock { display: none; }
+            .h1 { font-size: 32px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="page">
+    <!-- Top Nav Header -->
+    <div class="top">
+        <div class="brand">
+            <div class="brand-mark">L</div>
+            <div>
+                <div class="brand-title">LootLooto Catalog</div>
+                <div class="brand-sub">Products & inventory</div>
+            </div>
+        </div>
+        <div class="top-right">
+            <span id="user-role-tag" class="tag tag-accent-2">Guest</span>
+            <span id="user-name-display" style="font-size:14px; font-weight:600;">Not Signed In</span>
+            <button id="btn-create-staff" class="btn" style="display:none;" onclick="openStaffModal()">Create Staff</button>
+            <button id="btn-auth-toggle" class="btn btn-ghost" onclick="openLoginModal()">Sign in</button>
+        </div>
+    </div>
+
+    <!-- Hero Header -->
+    <div class="h-hero">
+        <div>
+            <div class="kicker">Catalog</div>
+            <h1 class="h1" id="hero-title">0 products</h1>
+            <p class="h-sub" id="hero-subtitle">Catalog inventory dashboard. Add or edit items using the side panel.</p>
+        </div>
+        <button class="btn btn-primary" onclick="openSheetNew()">＋ New product</button>
+    </div>
+
+    <!-- Filter Chips -->
+    <div class="chips">
+        <button class="chip" id="chip-all" aria-pressed="true" onclick="setFilter('all')">All · <span id="c-all">0</span></button>
+        <button class="chip" id="chip-pub" aria-pressed="false" onclick="setFilter('pub')">Published · <span id="c-pub">0</span></button>
+        <button class="chip warn" id="chip-low" aria-pressed="false" onclick="setFilter('low')">Low stock · <span id="c-low">0</span></button>
+        <button class="chip" id="chip-cat" aria-pressed="false" onclick="setFilter('cat')">Categories · <span id="c-cat">0</span></button>
+    </div>
+
+    <!-- Search & Toolbar -->
+    <div class="toolbar">
+        <div class="search field" style="margin:0; flex:1;">
+            <input class="input" id="table-search" placeholder="Search by name, SKU, brand…" oninput="debounceLoadProducts()">
+        </div>
+        <select class="input" id="filter-category" style="width: 200px;" onchange="loadProducts()">
+            <option value="">All categories</option>
+        </select>
+    </div>
+
+    <!-- Product Catalog Table -->
+    <div class="catalog">
+        <div class="row head">
+            <div>Image</div>
+            <div>Name & SKU</div>
+            <div class="col-cat">Category</div>
+            <div>Price</div>
+            <div class="col-stock">Stock</div>
+            <div class="col-status">Status</div>
+            <div style="text-align:right;">Actions</div>
+        </div>
+        <div id="catalog-rows-container">
+            <div class="empty">Loading catalog products...</div>
+        </div>
+    </div>
+</div>
+
+<!-- Side Sheet Backdrop & Form Drawer -->
+<div class="backdrop" id="sheet-backdrop" onclick="closeSheet()"></div>
+<aside class="sheet" id="product-sheet" aria-hidden="true">
+    <div class="sheet-head">
+        <div>
+            <div class="kicker" id="sheet-kicker">New product</div>
+            <h2 class="sheet-title" id="sheet-title">Product Details</h2>
+        </div>
+        <button class="close" onclick="closeSheet()" aria-label="Close">✕</button>
+    </div>
+
+    <!-- Tab Bar -->
+    <div class="tabs" role="tablist">
+        <button class="tab" id="tab-0" aria-selected="true" onclick="switchTab(0)">Basics</button>
+        <button class="tab" id="tab-1" aria-selected="false" onclick="switchTab(1)">Category & price</button>
+        <button class="tab" id="tab-2" aria-selected="false" onclick="switchTab(2)">Status</button>
+        <button class="tab" id="tab-3" aria-selected="false" onclick="switchTab(3)">Inventory</button>
+        <button class="tab" id="tab-4" aria-selected="false" onclick="switchTab(4)">Images</button>
+    </div>
+
+    <!-- Sheet Body Form Panes -->
+    <div class="sheet-body">
+        <input type="hidden" id="p-uuid">
+
+        <!-- Pane 0: Basics -->
+        <div class="pane active" id="pane-0">
+            <div class="field">
+                <label>Product name <span class="req">*</span></label>
+                <input class="input" id="p-name" placeholder="e.g. Chevron Palms Cushion Cover" oninput="autoGenerateSlug()">
+            </div>
+            <div class="grid-2">
+                <div class="field"><label>SKU <span class="req">*</span></label><input class="input" id="p-sku" placeholder="CU-CH-CO"></div>
+                <div class="field"><label>Slug</label><input class="input" id="p-slug" placeholder="auto-generated"></div>
+            </div>
+            <div class="grid-2">
+                <div class="field"><label>Brand</label><input class="input" id="p-brand" placeholder="Lootlooto"></div>
+                <div class="field"><label>Variant</label><input class="input" id="p-variant" placeholder="e.g. Black / 40x40"></div>
+            </div>
+            <div class="field">
+                <label>Description</label>
+                <textarea class="input" id="p-description" placeholder="Product features & specifications..."></textarea>
+            </div>
+        </div>
+
+        <!-- Pane 1: Category & Price -->
+        <div class="pane" id="pane-1">
+            <div class="field">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <label>Category <span class="req">*</span></label>
+                    <button type="button" class="btn btn-ghost" style="padding:2px 8px; font-size:12px;" onclick="openCategoryModal()">＋ New category</button>
+                </div>
+                <select class="input" id="p-category">
+                    <option value="">Select Category...</option>
+                </select>
+            </div>
+            <div class="grid-2">
+                <div class="field"><label>Selling price (₹) <span class="req">*</span></label><input type="number" step="0.01" class="input" id="p-selling-price" placeholder="499.00"></div>
+                <div class="field"><label>Compare price (₹)</label><input type="number" step="0.01" class="input" id="p-compare-price" placeholder="999.00"></div>
+            </div>
+        </div>
+
+        <!-- Pane 2: Status & Visibility -->
+        <div class="pane" id="pane-2">
+            <div class="field">
+                <label>Status</label>
+                <select class="input" id="p-status">
+                    <option value="OK">OK</option>
+                    <option value="LOW_STOCK">Low Stock</option>
+                    <option value="OUT_OF_STOCK">Out of Stock</option>
+                    <option value="DISCONTINUED">Discontinued</option>
+                </select>
+            </div>
+            <div class="field">
+                <label>Published</label>
+                <div class="switch">
+                    <div class="toggle" id="p-toggle" onclick="togglePublished()"></div>
+                    <span id="published-text">Live on storefront</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pane 3: Inventory & Admin fields -->
+        <div class="pane" id="pane-3">
+            <div class="grid-2">
+                <div class="field"><label>Opening qty</label><input type="number" class="input" id="p-opening-qty" value="0"></div>
+                <div class="field"><label>Current qty</label><input type="number" class="input" id="p-current-qty" value="0"></div>
+                <div class="field"><label>Reorder level</label><input type="number" class="input" id="p-reorder-level" placeholder="10"></div>
+                <div class="field"><label>Pack qty</label><input type="number" step="0.01" class="input" id="p-pack-qty" placeholder="1.0"></div>
+                <div class="field"><label>Location / bin</label><input class="input" id="p-bin" placeholder="Bin A-12"></div>
+                <div class="field"><label>Supplier</label><input class="input" id="p-supplier" placeholder="Supplier name"></div>
+                <div class="field"><label>Purchase date</label><input type="date" class="input" id="p-purchase-date"></div>
+                <div class="field"><label>Actual unit cost (₹)</label><input type="number" step="0.01" class="input" id="p-unit-cost" placeholder="250.00"></div>
+            </div>
+            <div class="field">
+                <label>Internal notes</label>
+                <textarea class="input" id="p-notes" placeholder="Staff inventory notes…"></textarea>
+            </div>
+        </div>
+
+        <!-- Pane 4: Images -->
+        <div class="pane" id="pane-4">
+            <div class="field">
+                <label>Add by URL</label>
+                <div style="display:flex; gap: var(--space-2);">
+                    <input class="input" id="img-url-input" placeholder="Paste image URL…" style="flex:1;">
+                    <button type="button" class="btn" onclick="addImageFromUrl()">Add</button>
+                </div>
+            </div>
+            <label class="btn" style="cursor:pointer; display:inline-block; margin-bottom:12px;">
+                📁 Upload file
+                <input type="file" id="file-upload-input" accept="image/*" style="display:none;" onchange="handleFileUpload(event)">
+            </label>
+            <div class="img-list" id="form-image-list"></div>
+        </div>
+    </div>
+
+    <!-- Sheet Footer Navigation -->
+    <div class="sheet-foot">
+        <span class="foot-hint" id="foot-hint">Step 1 of 5 · Basics</span>
+        <div class="foot-nav">
+            <button class="btn" id="btn-back" onclick="prevTab()">Back</button>
+            <button class="btn btn-primary" id="btn-next" onclick="nextTab()">Next</button>
+            <button class="btn btn-primary" id="btn-save" style="display:none;" onclick="saveProduct()">Save product</button>
+        </div>
+    </div>
+</aside>
+
+<!-- Modals -->
+<!-- Sign In Modal -->
+<div class="modal-overlay" id="modal-login">
+    <div class="modal-box">
+        <div class="modal-title">🔑 Sign in to Portal</div>
+        <form onsubmit="handleLoginSubmit(event)">
+            <div class="field">
+                <label>Email Address</label>
+                <input type="email" class="input" id="login-email" required placeholder="admin@lootlooto.com">
+            </div>
+            <div class="field" style="margin-bottom:20px;">
+                <label>Password</label>
+                <input type="password" class="input" id="login-password" required placeholder="••••••••">
+            </div>
+            <button type="submit" class="btn btn-primary" style="width:100%;">Sign in</button>
+            <button type="button" class="btn btn-ghost" style="width:100%; margin-top:8px;" onclick="closeLoginModal()">Cancel</button>
+        </form>
+    </div>
+</div>
+
+<!-- Category Modal -->
+<div class="modal-overlay" id="modal-category">
+    <div class="modal-box">
+        <div class="modal-title">🏷️ Create Category</div>
+        <form onsubmit="handleCategorySubmit(event)">
+            <div class="field">
+                <label>Category Name <span class="req">*</span></label>
+                <input type="text" class="input" id="cat-name" required placeholder="e.g. Cushions">
+            </div>
+            <div class="field" style="margin-bottom:20px;">
+                <label>Slug (optional)</label>
+                <input type="text" class="input" id="cat-slug" placeholder="e.g. cushions">
+            </div>
+            <button type="submit" class="btn btn-primary" style="width:100%;">Save category</button>
+            <button type="button" class="btn btn-ghost" style="width:100%; margin-top:8px;" onclick="closeCategoryModal()">Cancel</button>
+        </form>
+    </div>
+</div>
+
+<!-- Create Staff Modal -->
+<div class="modal-overlay" id="modal-staff">
+    <div class="modal-box">
+        <div class="modal-title">👨‍💼 Create Staff Account</div>
+        <form onsubmit="handleStaffSubmit(event)">
+            <div class="field">
+                <label>First Name <span class="req">*</span></label>
+                <input type="text" class="input" id="staff-fn" required placeholder="John">
+            </div>
+            <div class="field">
+                <label>Last Name</label>
+                <input type="text" class="input" id="staff-ln" placeholder="Doe">
+            </div>
+            <div class="field">
+                <label>Email Address <span class="req">*</span></label>
+                <input type="email" class="input" id="staff-email" required placeholder="staff@lootlooto.com">
+            </div>
+            <div class="field">
+                <label>Phone Number <span class="req">*</span></label>
+                <input type="number" class="input" id="staff-phone" required placeholder="9876543210">
+            </div>
+            <div class="field" style="margin-bottom:20px;">
+                <label>Password <span class="req">*</span></label>
+                <input type="password" class="input" id="staff-password" required placeholder="••••••••">
+            </div>
+            <button type="submit" class="btn btn-primary" style="width:100%;">Create Staff Account</button>
+            <button type="button" class="btn btn-ghost" style="width:100%; margin-top:8px;" onclick="closeStaffModal()">Cancel</button>
+        </form>
+    </div>
+</div>
+
+<div id="toast-container"></div>
+
+<!-- JS Logic -->
+<script>
+    const API_BASE = "";
+    let authToken = localStorage.getItem("access_token") || "";
+    let currentUser = JSON.parse(localStorage.getItem("user") || "null");
+    let currentTab = 0;
+    let isPublishedVal = true;
+    let formImages = [];
+    let activeFilter = 'all';
+    let categoriesList = [];
+    let searchTimeout = null;
+
+    const tabNames = ['Basics', 'Category & price', 'Status', 'Inventory', 'Images'];
+
+    document.addEventListener("DOMContentLoaded", () => {
+        updateUserUI();
+        loadCategories();
+        loadProducts();
+    });
+
+    // ── Auth UI ──────────────────────────────────
+    function updateUserUI() {
+        const roleTag = document.getElementById("user-role-tag");
+        const nameDisplay = document.getElementById("user-name-display");
+        const btnAuth = document.getElementById("btn-auth-toggle");
+        const btnStaff = document.getElementById("btn-create-staff");
+
+        if (authToken && currentUser) {
+            roleTag.textContent = `${currentUser.role.toUpperCase()}`;
+            nameDisplay.textContent = currentUser.first_name || currentUser.email_id;
+            btnAuth.textContent = "Sign out";
+            btnAuth.onclick = logout;
+            btnStaff.style.display = (currentUser.role === "admin") ? "inline-block" : "none";
+        } else {
+            roleTag.textContent = "GUEST";
+            nameDisplay.textContent = "Not Signed In";
+            btnAuth.textContent = "Sign in";
+            btnAuth.onclick = openLoginModal;
+            btnStaff.style.display = "none";
+        }
+    }
+
+    function getHeaders() {
+        const headers = { "Content-Type": "application/json" };
+        if (authToken) headers["Authorization"] = `Bearer ${authToken}`;
+        return headers;
+    }
+
+    function openLoginModal() { document.getElementById("modal-login").classList.add("active"); }
+    function closeLoginModal() { document.getElementById("modal-login").classList.remove("active"); }
+
+    async function handleLoginSubmit(e) {
+        e.preventDefault();
+        const email = document.getElementById("login-email").value;
+        const password = document.getElementById("login-password").value;
+
+        try {
+            const res = await fetch(`${API_BASE}/auth/login`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ email_id: email, password: password })
+            });
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.detail || "Login failed");
+
+            authToken = data.access_token;
+            currentUser = data.user;
+            localStorage.setItem("access_token", authToken);
+            localStorage.setItem("user", JSON.stringify(currentUser));
+
+            showToast("Signed in successfully!", "success");
+            updateUserUI();
+            closeLoginModal();
+            loadProducts();
+        } catch (err) {
+            showToast(err.message, "error");
+        }
+    }
+
+    function logout() {
+        authToken = "";
+        currentUser = null;
+        localStorage.removeItem("access_token");
+        localStorage.removeItem("user");
+        updateUserUI();
+        showToast("Signed out", "success");
+    }
+
+    // ── Staff Modal ──────────────────────────────
+    function openStaffModal() { document.getElementById("modal-staff").classList.add("active"); }
+    function closeStaffModal() { document.getElementById("modal-staff").classList.remove("active"); }
+
+    async function handleStaffSubmit(e) {
+        e.preventDefault();
+        try {
+            const res = await fetch(`${API_BASE}/auth/admin/create-staff`, {
+                method: "POST",
+                headers: getHeaders(),
+                body: JSON.stringify({
+                    first_name: document.getElementById("staff-fn").value,
+                    last_name: document.getElementById("staff-ln").value || undefined,
+                    email_id: document.getElementById("staff-email").value,
+                    phone_number: parseInt(document.getElementById("staff-phone").value),
+                    password: document.getElementById("staff-password").value
+                })
+            });
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.detail || "Staff creation failed");
+            showToast(`Staff account ${data.user.email_id} created!`, "success");
+            closeStaffModal();
+        } catch (err) {
+            showToast(err.message, "error");
+        }
+    }
+
+    // ── Category Modal ───────────────────────────
+    function openCategoryModal() { document.getElementById("modal-category").classList.add("active"); }
+    function closeCategoryModal() { document.getElementById("modal-category").classList.remove("active"); }
+
+    async function handleCategorySubmit(e) {
+        e.preventDefault();
+        try {
+            const res = await fetch(`${API_BASE}/catalog/categories`, {
+                method: "POST",
+                headers: getHeaders(),
+                body: JSON.stringify({
+                    name: document.getElementById("cat-name").value,
+                    slug: document.getElementById("cat-slug").value || undefined
+                })
+            });
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.detail || "Category creation failed");
+            showToast(`Category '${data.name}' created!`, "success");
+            closeCategoryModal();
+            await loadCategories();
+            document.getElementById("p-category").value = data.uuid;
+        } catch (err) {
+            showToast(err.message, "error");
+        }
+    }
+
+    async function loadCategories() {
+        try {
+            const res = await fetch(`${API_BASE}/catalog/categories`);
+            const data = await res.json();
+            categoriesList = Array.isArray(data) ? data : [];
+            
+            const pSelect = document.getElementById("p-category");
+            const filterSelect = document.getElementById("filter-category");
+            
+            pSelect.innerHTML = `<option value="">Select Category...</option>`;
+            filterSelect.innerHTML = `<option value="">All categories</option>`;
+
+            document.getElementById("c-cat").textContent = categoriesList.length;
+
+            categoriesList.forEach(c => {
+                pSelect.innerHTML += `<option value="${c.uuid}">${c.name}</option>`;
+                filterSelect.innerHTML += `<option value="${c.uuid}">${c.name}</option>`;
+            });
+        } catch (err) {
+            console.error("Categories error", err);
+        }
+    }
+
+    // ── Side Sheet & Tab Wizard ──────────────────
+    function openSheetNew() {
+        resetForm();
+        document.getElementById("sheet-kicker").textContent = "New product";
+        document.getElementById("sheet-title").textContent = "Add Product";
+        switchTab(0);
+        document.getElementById("sheet-backdrop").classList.add("open");
+        document.getElementById("product-sheet").classList.add("open");
+        document.getElementById("product-sheet").setAttribute("aria-hidden", "false");
+    }
+
+    function closeSheet() {
+        document.getElementById("sheet-backdrop").classList.remove("open");
+        document.getElementById("product-sheet").classList.remove("open");
+        document.getElementById("product-sheet").setAttribute("aria-hidden", "true");
+    }
+
+    function switchTab(index) {
+        currentTab = index;
+        for (let i = 0; i < 5; i++) {
+            document.getElementById(`tab-${i}`).setAttribute("aria-selected", i === index ? "true" : "false");
+            document.getElementById(`pane-${i}`).classList.toggle("active", i === index);
+        }
+        document.getElementById("foot-hint").textContent = `Step ${index + 1} of 5 · ${tabNames[index]}`;
+        document.getElementById("btn-back").style.display = index === 0 ? "none" : "inline-block";
+        document.getElementById("btn-next").style.display = index === 4 ? "none" : "inline-block";
+        document.getElementById("btn-save").style.display = index === 4 ? "inline-block" : "none";
+    }
+
+    function prevTab() { if (currentTab > 0) switchTab(currentTab - 1); }
+    function nextTab() { if (currentTab < 4) switchTab(currentTab + 1); }
+
+    function togglePublished() {
+        isPublishedVal = !isPublishedVal;
+        const toggle = document.getElementById("p-toggle");
+        const text = document.getElementById("published-text");
+        if (isPublishedVal) {
+            toggle.classList.remove("off");
+            toggle.setAttribute("aria-checked", "true");
+            text.textContent = "Live on storefront";
+        } else {
+            toggle.classList.add("off");
+            toggle.setAttribute("aria-checked", "false");
+            text.textContent = "Draft (Hidden)";
+        }
+    }
+
+    function autoGenerateSlug() {
+        const name = document.getElementById("p-name").value;
+        const slugInput = document.getElementById("p-slug");
+        if (!slugInput.dataset.manual) {
+            slugInput.value = name.toLowerCase().trim()
+                .replace(/[^\w\s-]/g, '')
+                .replace(/[\s_-]+/g, '-')
+                .replace(/^-+|-+$/g, '');
+        }
+    }
+    document.getElementById("p-slug").addEventListener("input", function() { this.dataset.manual = "true"; });
+
+    // ── Images Manager ───────────────────────────
+    function addImageFromUrl() {
+        const urlInput = document.getElementById("img-url-input");
+        const url = urlInput.value.trim();
+        if (!url) return;
+        formImages.push({ url: url, sort_order: formImages.length, is_primary: formImages.length === 0 });
+        urlInput.value = "";
+        renderFormImages();
+    }
+
+    async function handleFileUpload(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+        if (!authToken) { showToast("Please sign in first", "error"); openLoginModal(); return; }
+
+        const formData = new FormData();
+        formData.append("file", file);
+        showToast("Uploading file...", "info");
+
+        try {
+            const res = await fetch(`${API_BASE}/catalog/upload-image`, {
+                method: "POST",
+                headers: { "Authorization": `Bearer ${authToken}` },
+                body: formData
+            });
+            const data = await res.json();
+            if (res.status === 401) {
+                showToast("Please sign in as Staff / Admin to upload images.", "error");
+                openLoginModal();
+                return;
+            }
+            if (!res.ok) throw new Error(data.detail || "Upload failed");
+            formImages.push({ url: data.url, sort_order: formImages.length, is_primary: formImages.length === 0 });
+            renderFormImages();
+            showToast("Image uploaded!", "success");
+        } catch (err) {
+            showToast(err.message, "error");
+        } finally {
+            e.target.value = "";
+        }
+    }
+
+
+    function removeImage(idx) {
+        formImages.splice(idx, 1);
+        if (formImages.length > 0 && !formImages.some(i => i.is_primary)) formImages[0].is_primary = true;
+        renderFormImages();
+    }
+
+    function setPrimary(idx) {
+        formImages.forEach((img, i) => img.is_primary = (i === idx));
+        renderFormImages();
+    }
+
+    function renderFormImages() {
+        const list = document.getElementById("form-image-list");
+        list.innerHTML = "";
+        formImages.forEach((img, i) => {
+            list.innerHTML += `
+                <div class="img-tile">
+                    <img src="${img.url}" alt="img" onclick="setPrimary(${i})" title="Click to set primary">
+                    ${img.is_primary ? '<div class="badge">Primary</div>' : ''}
+                    <button type="button" class="rm" onclick="removeImage(${i})">✕</button>
+                </div>
+            `;
+        });
+    }
+
+    // ── Load Products & Filters ──────────────────
+    function setFilter(filterType) {
+        activeFilter = filterType;
+        ['all', 'pub', 'low', 'cat'].forEach(f => {
+            document.getElementById(`chip-${f}`).setAttribute("aria-pressed", f === filterType ? "true" : "false");
+        });
+        loadProducts();
+    }
+
+    function debounceLoadProducts() {
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(loadProducts, 300);
+    }
+
+    async function loadProducts() {
+        const search = document.getElementById("table-search").value;
+        const category = document.getElementById("filter-category").value;
+
+        let url = `${API_BASE}/catalog/products?limit=100`;
+        if (search) url += `&search=${encodeURIComponent(search)}`;
+        if (category) url += `&category_id=${encodeURIComponent(category)}`;
+        if (activeFilter === 'pub') url += `&is_published=true`;
+        if (activeFilter === 'low') url += `&status=LOW_STOCK`;
+
+        try {
+            const res = await fetch(url, { headers: getHeaders() });
+            const data = await res.json();
+            renderTable(data.items || []);
+        } catch (err) {
+            console.error("Failed to load products", err);
+        }
+    }
+
+    function renderTable(products) {
+        const container = document.getElementById("catalog-rows-container");
+        container.innerHTML = "";
+
+        const total = products.length;
+        const pubCount = products.filter(p => p.is_published).length;
+        const lowCount = products.filter(p => p.status === 'LOW_STOCK' || p.status === 'OUT_OF_STOCK').length;
+
+        document.getElementById("c-all").textContent = total;
+        document.getElementById("c-pub").textContent = pubCount;
+        document.getElementById("c-low").textContent = lowCount;
+        document.getElementById("hero-title").textContent = `${total} product${total !== 1 ? 's' : ''}`;
+
+        if (products.length === 0) {
+            container.innerHTML = `<div class="empty">No products match. Click <strong>＋ New product</strong> to add one!</div>`;
+            return;
+        }
+
+        products.forEach(p => {
+            const thumb = (p.images && p.images.length > 0) ? (p.images.find(i => i.is_primary) || p.images[0]).url : "https://via.placeholder.com/56?text=No+Img";
+            const catName = p.category ? p.category.name : "Uncategorized";
+            const isLow = p.status === "LOW_STOCK" || p.status === "OUT_OF_STOCK";
+
+            container.innerHTML += `
+                <div class="row">
+                    <div class="thumb"><img src="${thumb}" alt=""></div>
+                    <div>
+                        <div class="p-name">${escapeHtml(p.name)}</div>
+                        <div class="p-sku">SKU · ${escapeHtml(p.sku)}</div>
+                    </div>
+                    <div class="col-cat"><span class="tag tag-outline">${escapeHtml(catName)}</span></div>
+                    <div class="price">₹${p.selling_price.toFixed(2)}</div>
+                    <div class="col-stock">${p.current_qty}</div>
+                    <div class="col-status"><span class="status-tag ${isLow ? 'low' : ''}">${p.status.replace('_', ' ')}</span></div>
+                    <div class="row-actions">
+                        <button class="btn" onclick="editProduct('${p.uuid}')">Edit</button>
+                        <button class="btn btn-danger" onclick="deleteProduct('${p.uuid}')">Delete</button>
+                    </div>
+                </div>
+            `;
+        });
+    }
+
+    // ── Save Product ─────────────────────────────
+    async function saveProduct() {
+        if (!authToken) { showToast("Please sign in first", "error"); openLoginModal(); return; }
+
+        const uuid = document.getElementById("p-uuid").value;
+        const name = document.getElementById("p-name").value;
+        const sku = document.getElementById("p-sku").value;
+        const categoryId = document.getElementById("p-category").value;
+        const sellingPrice = parseFloat(document.getElementById("p-selling-price").value);
+
+        if (!name || !sku || !categoryId || isNaN(sellingPrice)) {
+            showToast("Please fill in all required fields (*)", "error");
+            return;
+        }
+
+        const payload = {
+            category_id: categoryId,
+            sku: sku,
+            slug: document.getElementById("p-slug").value || undefined,
+            name: name,
+            brand: document.getElementById("p-brand").value || undefined,
+            variant: document.getElementById("p-variant").value || undefined,
+            description: document.getElementById("p-description").value || undefined,
+            selling_price: sellingPrice,
+            compare_price: document.getElementById("p-compare-price").value ? parseFloat(document.getElementById("p-compare-price").value) : undefined,
+            status: document.getElementById("p-status").value,
+            is_published: isPublishedVal,
+            opening_qty: parseInt(document.getElementById("p-opening-qty").value) || 0,
+            current_qty: parseInt(document.getElementById("p-current-qty").value) || 0,
+            reorder_level: document.getElementById("p-reorder-level").value ? parseInt(document.getElementById("p-reorder-level").value) : undefined,
+            pack_qty: document.getElementById("p-pack-qty").value ? parseFloat(document.getElementById("p-pack-qty").value) : undefined,
+            location_bin: document.getElementById("p-bin").value || undefined,
+            supplier: document.getElementById("p-supplier").value || undefined,
+            purchase_date: document.getElementById("p-purchase-date").value || undefined,
+            actual_unit_cost: document.getElementById("p-unit-cost").value ? parseFloat(document.getElementById("p-unit-cost").value) : undefined,
+            notes: document.getElementById("p-notes").value || undefined,
+            images: formImages
+        };
+
+        const isEdit = Boolean(uuid);
+        const endpoint = isEdit ? `${API_BASE}/catalog/products/${uuid}` : `${API_BASE}/catalog/products`;
+        const method = isEdit ? "PATCH" : "POST";
+
+        try {
+            const res = await fetch(endpoint, {
+                method: method,
+                headers: getHeaders(),
+                body: JSON.stringify(payload)
+            });
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.detail || "Save failed");
+
+            showToast(isEdit ? "Product updated!" : "Product created!", "success");
+            closeSheet();
+            loadProducts();
+        } catch (err) {
+            showToast(err.message, "error");
+        }
+    }
+
+    async function editProduct(uuid) {
+        try {
+            const res = await fetch(`${API_BASE}/catalog/products/${uuid}`, { headers: getHeaders() });
+            const p = await res.json();
+            if (!res.ok) throw new Error("Could not fetch product");
+
+            document.getElementById("p-uuid").value = p.uuid;
+            document.getElementById("p-name").value = p.name || "";
+            document.getElementById("p-sku").value = p.sku || "";
+            document.getElementById("p-slug").value = p.slug || "";
+            document.getElementById("p-slug").dataset.manual = "true";
+            document.getElementById("p-brand").value = p.brand || "";
+            document.getElementById("p-variant").value = p.variant || "";
+            document.getElementById("p-description").value = p.description || "";
+            document.getElementById("p-category").value = p.category_id || "";
+            document.getElementById("p-selling-price").value = p.selling_price || "";
+            document.getElementById("p-compare-price").value = p.compare_price || "";
+            document.getElementById("p-status").value = p.status || "OK";
+
+            isPublishedVal = Boolean(p.is_published);
+            const toggle = document.getElementById("p-toggle");
+            const text = document.getElementById("published-text");
+            if (isPublishedVal) { toggle.classList.remove("off"); text.textContent = "Live on storefront"; }
+            else { toggle.classList.add("off"); text.textContent = "Draft (Hidden)"; }
+
+            document.getElementById("p-opening-qty").value = p.opening_qty ?? 0;
+            document.getElementById("p-current-qty").value = p.current_qty ?? 0;
+            document.getElementById("p-reorder-level").value = p.reorder_level ?? "";
+            document.getElementById("p-pack-qty").value = p.pack_qty ?? "";
+            document.getElementById("p-bin").value = p.location_bin || "";
+            document.getElementById("p-supplier").value = p.supplier || "";
+            document.getElementById("p-purchase-date").value = p.purchase_date || "";
+            document.getElementById("p-unit-cost").value = p.actual_unit_cost ?? "";
+            document.getElementById("p-notes").value = p.notes || "";
+
+            formImages = (p.images || []).map(i => ({ url: i.url, sort_order: i.sort_order || 0, is_primary: i.is_primary || false }));
+            renderFormImages();
+
+            document.getElementById("sheet-kicker").textContent = "Edit product";
+            document.getElementById("sheet-title").textContent = p.name;
+            switchTab(0);
+            document.getElementById("sheet-backdrop").classList.add("open");
+            document.getElementById("product-sheet").classList.add("open");
+        } catch (err) {
+            showToast(err.message, "error");
+        }
+    }
+
+    async function deleteProduct(uuid) {
+        if (!confirm("Are you sure you want to delete this product?")) return;
+        try {
+            const res = await fetch(`${API_BASE}/catalog/products/${uuid}`, { method: "DELETE", headers: getHeaders() });
+            if (!res.ok) throw new Error("Delete failed");
+            showToast("Product deleted", "success");
+            loadProducts();
+        } catch (err) { showToast(err.message, "error"); }
+    }
+
+    function resetForm() {
+        document.getElementById("p-uuid").value = "";
+        document.getElementById("p-name").value = "";
+        document.getElementById("p-sku").value = "";
+        document.getElementById("p-slug").value = "";
+        delete document.getElementById("p-slug").dataset.manual;
+        document.getElementById("p-brand").value = "";
+        document.getElementById("p-variant").value = "";
+        document.getElementById("p-description").value = "";
+        document.getElementById("p-category").value = "";
+        document.getElementById("p-selling-price").value = "";
+        document.getElementById("p-compare-price").value = "";
+        document.getElementById("p-status").value = "OK";
+        isPublishedVal = true;
+        document.getElementById("p-toggle").classList.remove("off");
+        document.getElementById("published-text").textContent = "Live on storefront";
+        document.getElementById("p-opening-qty").value = "0";
+        document.getElementById("p-current-qty").value = "0";
+        document.getElementById("p-reorder-level").value = "";
+        document.getElementById("p-pack-qty").value = "";
+        document.getElementById("p-bin").value = "";
+        document.getElementById("p-supplier").value = "";
+        document.getElementById("p-purchase-date").value = "";
+        document.getElementById("p-unit-cost").value = "";
+        document.getElementById("p-notes").value = "";
+        formImages = [];
+        renderFormImages();
+    }
+
+    function showToast(msg, type = "info") {
+        const container = document.getElementById("toast-container");
+        const toast = document.createElement("div");
+        toast.className = `toast ${type}`;
+        toast.textContent = msg;
+        container.appendChild(toast);
+        setTimeout(() => toast.remove(), 4000);
+    }
+
+    function escapeHtml(str) {
+        return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+</script>
+</body>
+</html>

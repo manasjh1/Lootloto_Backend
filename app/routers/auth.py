@@ -42,9 +42,7 @@ async def register(request: Request, body: RegisterIn):
 
     existing = await user_service.get_user_by_email(body.email_id)
     if existing:
-        if existing["is_verified"]:
-            raise HTTPException(status_code=400, detail="Email already registered. Please sign in.")
-        await user_service.delete_user(existing["uuid"])
+        raise HTTPException(status_code=400, detail="Email already registered. Please sign in.")
 
     try:
         user = await user_service.create_user(
@@ -53,18 +51,51 @@ async def register(request: Request, body: RegisterIn):
             email_id=body.email_id,
             phone_number=body.phone_number,
             password=hash_password(body.password),
+            role="buyer",
+            is_verified=True,
         )
     except Exception as e:
         print(f"[register error] {e}")
-        raise HTTPException(status_code=400, detail="Phone number already registered.")
+        raise HTTPException(status_code=400, detail="Phone number or email already registered.")
 
     await user_service.create_profile(user["uuid"])
 
-    otp, hashed = generate_otp()
-    await token_service.store_verify_token(user["uuid"], hashed)
-    await brevo_service.send_verification_email(user["email_id"], user["first_name"], otp)
+    return {"message": "Account created successfully! You can now log in immediately.", "user": {"uuid": user["uuid"], "email_id": user["email_id"], "role": user["role"]}}
 
-    return {"message": "Account created. Check your email for the 6-digit OTP."}
+
+from app.core.deps import require_admin
+from app.models.rbac import StaffCreateIn
+
+@router.post("/admin/create-staff", status_code=status.HTTP_201_CREATED)
+async def create_staff(body: StaffCreateIn, admin=Depends(require_admin)):
+    """Super Admin creates a new Staff user account."""
+    existing = await user_service.get_user_by_email(body.email_id)
+    if existing:
+        raise HTTPException(status_code=400, detail="User email already exists.")
+
+    try:
+        staff_user = await user_service.create_user(
+            first_name=body.first_name,
+            last_name=body.last_name,
+            email_id=body.email_id,
+            phone_number=body.phone_number,
+            password=hash_password(body.password),
+            role="staff",
+            is_verified=True,
+        )
+        await user_service.create_profile(staff_user["uuid"])
+        return {
+            "message": f"Staff user '{staff_user['email_id']}' created successfully!",
+            "user": {
+                "uuid": staff_user["uuid"],
+                "first_name": staff_user["first_name"],
+                "email_id": staff_user["email_id"],
+                "role": staff_user["role"],
+            }
+        }
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=f"Failed to create staff user: {str(e)}")
+
 
 
 # ── Verify OTP ────────────────────────────────────────────

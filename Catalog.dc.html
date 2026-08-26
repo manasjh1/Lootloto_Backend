@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/organic-b26d167e-11b3-45b7-8bd8-fb074429561d/styles.css">
+<script src="_ds/organic-b26d167e-11b3-45b7-8bd8-fb074429561d/_ds_bundle.js"></script>
+<style>
+  body { background: var(--color-bg); color: var(--color-text); font-family: var(--font-body); margin: 0; }
+  a { color: var(--color-accent-700); }
+  a:hover { color: var(--color-accent-800); }
+  .page { max-width: 1180px; margin: 0 auto; padding: var(--space-6) var(--space-6) var(--space-10); }
+  .top { display: flex; align-items: center; justify-content: space-between; padding: var(--space-4) 0 var(--space-6); }
+  .brand { display: flex; align-items: center; gap: var(--space-3); }
+  .brand-mark { width: 44px; height: 44px; border-radius: 999px; background: var(--color-accent); color: var(--color-neutral-100); display: grid; place-items: center; font-family: var(--font-heading); font-size: 20px; }
+  .brand-title { font-family: var(--font-heading); font-size: 22px; line-height: 1; }
+  .brand-sub { font-size: 13px; color: var(--color-neutral-600); margin-top: 4px; }
+  .top-right { display: flex; align-items: center; gap: var(--space-3); }
+  .h-hero { display: flex; align-items: baseline; justify-content: space-between; gap: var(--space-6); margin-bottom: var(--space-6); }
+  .h1 { font-family: var(--font-heading); font-size: 44px; line-height: 1.05; margin: 0; }
+  .h-sub { color: var(--color-neutral-600); font-size: 15px; max-width: 42ch; }
+  .chips { display: flex; gap: var(--space-2); flex-wrap: wrap; margin-bottom: var(--space-5); align-items: center; }
+  .chip { padding: 8px 14px; border-radius: 999px; background: transparent; border: 1px solid var(--color-neutral-300); font: inherit; font-size: 14px; color: var(--color-text); cursor: pointer; }
+  .chip[aria-pressed="true"] { background: var(--color-accent); color: var(--color-neutral-100); border-color: var(--color-accent); }
+  .chip.warn { color: var(--color-accent-800); border-color: var(--color-accent-300); }
+  .toolbar { display: flex; gap: var(--space-3); align-items: center; margin-bottom: var(--space-4); }
+  .search { flex: 1; }
+  .catalog { border-radius: var(--radius-lg); background: var(--color-neutral-100); box-shadow: var(--shadow-sm); overflow: hidden; }
+  .row { display: grid; grid-template-columns: 72px 1fr 160px 120px 90px 110px 120px; gap: var(--space-4); align-items: center; padding: var(--space-4) var(--space-5); border-bottom: 1px solid var(--color-neutral-200); }
+  .row.head { background: transparent; padding-top: var(--space-3); padding-bottom: var(--space-3); font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--color-neutral-600); }
+  .row:last-child { border-bottom: 0; }
+  .thumb { width: 56px; height: 56px; border-radius: var(--radius-md); background: var(--color-accent-2-200); display: grid; place-items: center; overflow: hidden; }
+  .thumb img { width: 100%; height: 100%; object-fit: cover; }
+  .p-name { font-weight: 600; }
+  .p-sku { font-size: 12px; color: var(--color-neutral-600); margin-top: 3px; }
+  .price { font-family: var(--font-heading); }
+  .row-actions { display: flex; gap: 6px; justify-content: flex-end; }
+
+  /* Side sheet */
+  .backdrop { position: fixed; inset: 0; background: color-mix(in oklab, var(--color-text) 40%, transparent); opacity: 0; pointer-events: none; transition: opacity .2s ease; z-index: 40; }
+  .backdrop.open { opacity: 1; pointer-events: auto; }
+  .sheet { position: fixed; top: 0; right: 0; height: 100vh; width: min(560px, 96vw); background: var(--color-bg); box-shadow: var(--shadow-lg); transform: translateX(105%); transition: transform .28s ease; z-index: 50; display: flex; flex-direction: column; border-top-left-radius: var(--radius-lg); border-bottom-left-radius: var(--radius-lg); }
+  .sheet.open { transform: translateX(0); }
+  .sheet-head { padding: var(--space-5) var(--space-6) var(--space-3); display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); }
+  .sheet-title { font-family: var(--font-heading); font-size: 24px; margin: 0; }
+  .close { background: transparent; border: 0; width: 36px; height: 36px; border-radius: 999px; cursor: pointer; display: grid; place-items: center; color: var(--color-text); }
+  .close:hover { background: var(--color-neutral-200); }
+  .tabs { display: flex; gap: 6px; padding: 0 var(--space-6); flex-wrap: wrap; }
+  .tab { padding: 8px 14px; border-radius: 999px; background: transparent; border: 1px solid var(--color-neutral-300); font: inherit; font-size: 13px; cursor: pointer; color: var(--color-text); }
+  .tab[aria-selected="true"] { background: var(--color-accent-2); color: var(--color-neutral-100); border-color: var(--color-accent-2); }
+  .sheet-body { flex: 1; overflow-y: auto; padding: var(--space-5) var(--space-6) var(--space-6); }
+  .pane { display: none; }
+  .pane.active { display: block; }
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-4); }
+  .grid-1 { display: grid; gap: var(--space-4); }
+  .field { display: flex; flex-direction: column; gap: 6px; margin-bottom: var(--space-4); }
+  .field label { font-size: 13px; color: var(--color-neutral-700); }
+  .req { color: var(--color-accent); }
+  .input, textarea.input, select.input { width: 100%; padding: 10px 14px; border-radius: 999px; border: 1px solid var(--color-neutral-300); background: var(--color-neutral-100); font: inherit; color: var(--color-text); box-sizing: border-box; }
+  textarea.input { border-radius: var(--radius-md); min-height: 88px; resize: vertical; }
+  .input:focus-visible, textarea.input:focus-visible, select.input:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; }
+  .switch { display: flex; align-items: center; gap: var(--space-3); }
+  .toggle { position: relative; width: 44px; height: 26px; border-radius: 999px; background: var(--color-accent-2); cursor: pointer; }
+  .toggle::after { content: ""; position: absolute; top: 3px; left: 21px; width: 20px; height: 20px; border-radius: 999px; background: var(--color-neutral-100); transition: left .18s; }
+  .toggle.off { background: var(--color-neutral-300); }
+  .toggle.off::after { left: 3px; }
+  .sheet-foot { padding: var(--space-4) var(--space-6); border-top: 1px solid var(--color-neutral-200); display: flex; gap: var(--space-3); justify-content: space-between; align-items: center; background: var(--color-bg); }
+  .foot-nav { display: flex; gap: var(--space-2); }
+  .btn { padding: 10px 20px; border-radius: 999px; border: 1px solid var(--color-neutral-300); background: transparent; font: inherit; font-size: 14px; cursor: pointer; color: var(--color-text); }
+  .btn:hover { background: var(--color-neutral-200); }
+  .btn-primary { background: var(--color-accent); color: var(--color-neutral-100); border-color: var(--color-accent); }
+  .btn-primary:hover { background: var(--color-accent-600); border-color: var(--color-accent-600); }
+  .btn-ghost { border-color: transparent; }
+  .btn-danger { color: var(--color-neutral-100); background: #b04a3e; border-color: #b04a3e; }
+  .btn-danger:hover { background: #964034; border-color: #964034; }
+  .kicker { font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--color-accent-700); margin-bottom: var(--space-2); }
+  .status-tag { padding: 4px 10px; border-radius: 999px; font-size: 12px; background: var(--color-accent-2-200); color: var(--color-accent-2-800); display: inline-block; }
+  .status-tag.low { background: var(--color-accent-200); color: var(--color-accent-800); }
+  .img-list { display: flex; gap: var(--space-3); flex-wrap: wrap; margin-top: var(--space-3); }
+  .img-tile { width: 90px; height: 90px; border-radius: var(--radius-md); overflow: hidden; position: relative; background: var(--color-accent-2-200); }
+  .img-tile img { width: 100%; height: 100%; object-fit: cover; }
+  .img-tile .badge { position: absolute; top: 6px; left: 6px; font-size: 10px; padding: 2px 6px; border-radius: 999px; background: var(--color-accent); color: var(--color-neutral-100); }
+  .img-tile .rm { position: absolute; top: 4px; right: 4px; width: 22px; height: 22px; border-radius: 999px; border: 0; background: var(--color-neutral-100); cursor: pointer; }
+  .empty { padding: var(--space-8) var(--space-6); text-align: center; color: var(--color-neutral-600); }
+  .foot-hint { font-size: 12px; color: var(--color-neutral-600); }
+  @media (max-width: 780px) {
+    .row { grid-template-columns: 56px 1fr 90px 100px; }
+    .row .col-cat, .row .col-status, .row .col-stock { display: none; }
+  }
+</style>
+</helmet>
+
+<div class="page">
+  <div class="top">
+    <div class="brand">
+      <div class="brand-mark">L</div>
+      <div>
+        <div class="brand-title">LootLooto Catalog</div>
+        <div class="brand-sub">Products & inventory</div>
+      </div>
+    </div>
+    <div class="top-right">
+      <span class="tag tag-accent-2">Admin · Super</span>
+      <button class="btn">Create Staff</button>
+      <button class="btn btn-ghost">Sign out</button>
+    </div>
+  </div>
+
+  <div class="h-hero">
+    <div>
+      <div class="kicker">Catalog</div>
+      <h1 class="h1">{{ total }} product<sc-if value="{{ plural }}" hint-placeholder-val="{{ true }}">s</sc-if></h1>
+      <p class="h-sub">One published, none low on stock. Add or edit items on the right.</p>
+    </div>
+    <button class="btn btn-primary" onClick="{{ onNew }}">＋ New product</button>
+  </div>
+
+  <div class="chips">
+    <button class="chip" aria-pressed="{{ filterAll }}" onClick="{{ setAll }}">All · {{ total }}</button>
+    <button class="chip" aria-pressed="{{ filterPub }}" onClick="{{ setPub }}">Published · {{ published }}</button>
+    <button class="chip warn" aria-pressed="{{ filterLow }}" onClick="{{ setLow }}">Low stock · {{ low }}</button>
+    <button class="chip" aria-pressed="{{ filterCat }}" onClick="{{ setCat }}">Categories · {{ categories }}</button>
+  </div>
+
+  <div class="toolbar">
+    <div class="search field" style="margin:0; flex:1;">
+      <input class="input" placeholder="Search by name, SKU, brand…" value="{{ query }}" onChange="{{ onQuery }}">
+    </div>
+    <select class="input" style="width: 200px;">
+      <option>All categories</option>
+      <option>Cushions</option>
+    </select>
+  </div>
+
+  <div class="catalog">
+    <div class="row head">
+      <div>Image</div>
+      <div>Name & SKU</div>
+      <div class="col-cat">Category</div>
+      <div>Price</div>
+      <div class="col-stock">Stock</div>
+      <div class="col-status">Status</div>
+      <div style="text-align:right;">Actions</div>
+    </div>
+    <sc-for list="{{ products }}" as="p" hint-placeholder-count="1">
+      <div class="row">
+        <div class="thumb"><img src="{{ p.image }}" alt=""></div>
+        <div>
+          <div class="p-name">{{ p.name }}</div>
+          <div class="p-sku">SKU · {{ p.sku }}</div>
+        </div>
+        <div class="col-cat"><span class="tag tag-outline">{{ p.category }}</span></div>
+        <div class="price">₹{{ p.price }}</div>
+        <div class="col-stock">{{ p.stock }}</div>
+        <div class="col-status"><span class="status-tag">{{ p.status }}</span></div>
+        <div class="row-actions">
+          <button class="btn" onClick="{{ p.onEdit }}">Edit</button>
+          <button class="btn btn-danger">Delete</button>
+        </div>
+      </div>
+    </sc-for>
+    <sc-if value="{{ isEmpty }}" hint-placeholder-val="{{ false }}">
+      <div class="empty">No products match.</div>
+    </sc-if>
+  </div>
+</div>
+
+<div class="backdrop {{ openClass }}" onClick="{{ onClose }}"></div>
+<aside class="sheet {{ openClass }}" aria-hidden="{{ ariaHidden }}">
+  <div class="sheet-head">
+    <div>
+      <div class="kicker">Edit product</div>
+      <h2 class="sheet-title">{{ formName }}</h2>
+    </div>
+    <button class="close" onClick="{{ onClose }}" aria-label="Close">✕</button>
+  </div>
+  <div class="tabs" role="tablist">
+    <button class="tab" aria-selected="{{ isBasics }}" onClick="{{ goBasics }}">Basics</button>
+    <button class="tab" aria-selected="{{ isPricing }}" onClick="{{ goPricing }}">Category & price</button>
+    <button class="tab" aria-selected="{{ isStatus }}" onClick="{{ goStatus }}">Status</button>
+    <button class="tab" aria-selected="{{ isInventory }}" onClick="{{ goInventory }}">Inventory</button>
+    <button class="tab" aria-selected="{{ isImages }}" onClick="{{ goImages }}">Images</button>
+  </div>
+
+  <div class="sheet-body">
+    <div class="pane {{ paneBasics }}">
+      <div class="field">
+        <label>Product name <span class="req">*</span></label>
+        <input class="input" value="Chevron Palms Cushion Cover">
+      </div>
+      <div class="grid-2">
+        <div class="field"><label>SKU <span class="req">*</span></label><input class="input" value="CU-CH-CO"></div>
+        <div class="field"><label>Slug</label><input class="input" value="chevron-palms-cushion-cover"></div>
+      </div>
+      <div class="grid-2">
+        <div class="field"><label>Brand</label><input class="input" value="Lootlooto"></div>
+        <div class="field"><label>Variant</label><input class="input" value="Black"></div>
+      </div>
+      <div class="field">
+        <label>Description</label>
+        <textarea class="input">Soft</textarea>
+      </div>
+    </div>
+
+    <div class="pane {{ panePricing }}">
+      <div class="field">
+        <label>Category <span class="req">*</span></label>
+        <select class="input"><option>Cushions</option></select>
+      </div>
+      <div class="grid-2">
+        <div class="field"><label>Selling price (₹) <span class="req">*</span></label><input class="input" value="230"></div>
+        <div class="field"><label>Compare price (₹)</label><input class="input" placeholder="999.00"></div>
+      </div>
+      <button class="btn btn-ghost">＋ New category</button>
+    </div>
+
+    <div class="pane {{ paneStatus }}">
+      <div class="field">
+        <label>Status</label>
+        <select class="input"><option>OK</option><option>Draft</option><option>Archived</option></select>
+      </div>
+      <div class="field">
+        <label>Published</label>
+        <div class="switch">
+          <div class="toggle" role="switch" aria-checked="true"></div>
+          <span>Live on storefront</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="pane {{ paneInventory }}">
+      <div class="grid-2">
+        <div class="field"><label>Opening qty</label><input class="input" value="2"></div>
+        <div class="field"><label>Current qty</label><input class="input" value="3"></div>
+        <div class="field"><label>Reorder level</label><input class="input" placeholder="10"></div>
+        <div class="field"><label>Pack qty</label><input class="input" placeholder="1.0"></div>
+        <div class="field"><label>Location / bin</label><input class="input" placeholder="Bin A-12"></div>
+        <div class="field"><label>Supplier</label><input class="input" placeholder="Supplier name"></div>
+        <div class="field"><label>Purchase date</label><input class="input" type="date"></div>
+        <div class="field"><label>Actual unit cost (₹)</label><input class="input" placeholder="250.00"></div>
+      </div>
+      <div class="field">
+        <label>Internal notes</label>
+        <textarea class="input" placeholder="Staff notes…"></textarea>
+      </div>
+    </div>
+
+    <div class="pane {{ paneImages }}">
+      <div class="field">
+        <label>Add by URL</label>
+        <div style="display:flex; gap: var(--space-2);">
+          <input class="input" placeholder="Paste image URL…" style="flex:1;">
+          <button class="btn">Add</button>
+        </div>
+      </div>
+      <button class="btn">Upload file</button>
+      <div class="img-list">
+        <div class="img-tile"><div class="badge">Primary</div><button class="rm">✕</button></div>
+        <div class="img-tile"><button class="rm">✕</button></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sheet-foot">
+    <span class="foot-hint">All fields preserved · {{ tabHint }}</span>
+    <div class="foot-nav">
+      <button class="btn" onClick="{{ prevTab }}">Back</button>
+      <sc-if value="{{ notLast }}" hint-placeholder-val="{{ true }}">
+        <button class="btn btn-primary" onClick="{{ nextTab }}">Next</button>
+      </sc-if>
+      <sc-if value="{{ isLast }}" hint-placeholder-val="{{ false }}">
+        <button class="btn btn-primary">Save product</button>
+      </sc-if>
+    </div>
+  </div>
+</aside>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { open: false, tab: 0, filter: 'all', query: '' };
+  tabs = ['basics','pricing','status','inventory','images'];
+  tabLabels = ['Basics','Category & price','Status','Inventory','Images'];
+  products = [{
+    id: 1, name: 'Chevron Palms Cushion Cover', sku: 'CU-CH-CO',
+    category: 'Cushions', price: '230.00', stock: 3, status: 'OK',
+    image: 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=200'
+  }];
+  renderVals() {
+    const s = this.state;
+    const setTab = (i) => this.setState({ tab: i });
+    return {
+      total: this.products.length, plural: this.products.length !== 1,
+      published: 1, low: 0, categories: 1,
+      filterAll: s.filter === 'all', filterPub: s.filter === 'pub',
+      filterLow: s.filter === 'low', filterCat: s.filter === 'cat',
+      setAll: () => this.setState({filter:'all'}),
+      setPub: () => this.setState({filter:'pub'}),
+      setLow: () => this.setState({filter:'low'}),
+      setCat: () => this.setState({filter:'cat'}),
+      query: s.query, onQuery: (e) => this.setState({query: e.target.value}),
+      products: this.products.map(p => ({...p, onEdit: () => this.setState({open:true, tab:0})})),
+      isEmpty: this.products.length === 0,
+      onNew: () => this.setState({open:true, tab:0}),
+      onClose: () => this.setState({open:false}),
+      openClass: s.open ? 'open' : '',
+      ariaHidden: !s.open,
+      formName: 'Chevron Palms Cushion Cover',
+      isBasics: s.tab===0, isPricing: s.tab===1, isStatus: s.tab===2, isInventory: s.tab===3, isImages: s.tab===4,
+      paneBasics: s.tab===0?'active':'', panePricing: s.tab===1?'active':'',
+      paneStatus: s.tab===2?'active':'', paneInventory: s.tab===3?'active':'', paneImages: s.tab===4?'active':'',
+      goBasics: () => setTab(0), goPricing: () => setTab(1), goStatus: () => setTab(2),
+      goInventory: () => setTab(3), goImages: () => setTab(4),
+      prevTab: () => setTab(Math.max(0, s.tab-1)),
+      nextTab: () => setTab(Math.min(4, s.tab+1)),
+      notLast: s.tab < 4, isLast: s.tab === 4,
+      tabHint: `Step ${s.tab+1} of 5 · ${this.tabLabels[s.tab]}`
+    };
+  }
+}
+</script>
+</body>
+</html>

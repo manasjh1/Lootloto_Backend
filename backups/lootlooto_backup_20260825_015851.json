@@ -1,0 +1,121 @@
+{
+  "timestamp": "2026-08-25T01:58:51.051377",
+  "tables": {
+    "roles": [],
+    "permissions": [],
+    "role_permissions": [],
+    "users": [
+      {
+        "uuid": "934cb199-a734-4c5f-a900-8271754a806e",
+        "first_name": "Manas",
+        "last_name": "Jha",
+        "email_id": "manasjh1@gmail.com",
+        "phone_number": 9142877324,
+        "password": "$argon2id$v=19$m=65536,t=3,p=4$GLn6H4YBAUvZXRI2a+xk5Q$Oi4gOBjg+iBd8qHVDCnTLzGmTs6WXFkrYZ/AJbkMbng",
+        "role": "buyer",
+        "is_verified": true,
+        "is_active": true,
+        "created_at": "2026-08-21T21:39:55.228786+00:00",
+        "updated_at": "2026-08-21T21:40:34.282293+00:00"
+      },
+      {
+        "uuid": "2605e739-6ee3-4277-bb65-78be32657316",
+        "first_name": "manas",
+        "last_name": "jha",
+        "email_id": "manasjha615@gmail.com",
+        "phone_number": 9717102566,
+        "password": "$argon2id$v=19$m=65536,t=3,p=4$8T280VkcxFd6qgBB2YFrdQ$OzVAcwfL17sIZca+HQ/Tca8kQLfgzZCwpMnNdGWAgJU",
+        "role": "buyer",
+        "is_verified": true,
+        "is_active": true,
+        "created_at": "2026-08-24T19:45:32.043573+00:00",
+        "updated_at": "2026-08-24T19:46:20.536366+00:00"
+      },
+      {
+        "uuid": "199beb8d-414b-4aab-9e03-9d0476563c75",
+        "first_name": "aditya",
+        "last_name": "srivastav",
+        "email_id": "srivastavaaditya674@gmail.com",
+        "phone_number": 0,
+        "password": "$argon2id$v=19$m=65536,t=3,p=4$oKPXe9JozRnHEB9rwqhmzQ$8EfhFOB4sRPZdRuzKsMNMUhgGq3NClwmWcThop+mmKQ",
+        "role": "buyer",
+        "is_verified": true,
+        "is_active": true,
+        "created_at": "2026-08-24T19:44:34.38871+00:00",
+        "updated_at": "2026-08-24T19:46:36.53651+00:00"
+      },
+      {
+        "uuid": "60ef2fb8-a3c9-4fbc-9de1-b3e88ce88b2c",
+        "first_name": "Super",
+        "last_name": "Admin",
+        "email_id": "admin@lootlooto.com",
+        "phone_number": 9999999999,
+        "password": "$argon2id$v=19$m=65536,t=3,p=4$yog8+B61IRJAOYxnKS8few$tkRxOLsNc+wxPdrcSJMFpCOe7+nDMwgCVkkcYOeHPJw",
+        "role": "admin",
+        "is_verified": true,
+        "is_active": true,
+        "created_at": "2026-08-24T19:57:07.693573+00:00",
+        "updated_at": "2026-08-24T19:57:07.693573+00:00"
+      }
+    ],
+    "categories": [
+      {
+        "uuid": "5d69323f-16b2-4acc-88dd-61fa8562912d",
+        "name": "Cushions",
+        "slug": "Cushions",
+        "is_active": true,
+        "created_at": "2026-08-24T20:08:30.616411+00:00",
+        "updated_at": "2026-08-24T20:08:30.616411+00:00"
+      }
+    ],
+    "products": [
+      {
+        "uuid": "4bfc907f-214a-4f61-9ae4-cc1066bc9dac",
+        "category_id": "5d69323f-16b2-4acc-88dd-61fa8562912d",
+        "sku": "CU-CH-CO",
+        "slug": "chevron-palms-cushion-cover",
+        "name": "Chevron Palms Cushion Cover",
+        "description": "Soft",
+        "brand": "Lootlooto",
+        "variant": "Black",
+        "selling_price": 230.0,
+        "compare_price": null,
+        "is_published": true,
+        "status": "OK",
+        "pack_qty": null,
+        "location_bin": null,
+        "supplier": null,
+        "purchase_date": null,
+        "actual_unit_cost": null,
+        "opening_qty": 2,
+        "current_qty": 3,
+        "reorder_level": null,
+        "notes": null,
+        "created_by": "60ef2fb8-a3c9-4fbc-9de1-b3e88ce88b2c",
+        "updated_by": "60ef2fb8-a3c9-4fbc-9de1-b3e88ce88b2c",
+        "created_at": "2026-08-24T20:12:38.808913+00:00",
+        "updated_at": "2026-08-24T20:14:08.901852+00:00"
+      }
+    ],
+    "product_images": [
+      {
+        "uuid": "4b1cb627-a7e9-4aae-bc02-56d60578ae90",
+        "product_id": "4bfc907f-214a-4f61-9ae4-cc1066bc9dac",
+        "url": "https://qnxbhevfqcxytejemwns.supabase.co/storage/v1/object/public/product-images/08727473-fc62-45c2-947d-ca2877f5d298.jpg?",
+        "alt_text": "Not Red Rot.jpg",
+        "sort_order": 0,
+        "is_primary": true,
+        "created_at": "2026-08-24T20:12:38.854971+00:00"
+      },
+      {
+        "uuid": "a5d51c30-8bd2-4e13-a00d-da0f45c34c47",
+        "product_id": "4bfc907f-214a-4f61-9ae4-cc1066bc9dac",
+        "url": "https://qnxbhevfqcxytejemwns.supabase.co/storage/v1/object/public/product-images/3b9ebceb-01e6-4712-94e4-3baf2295ad90.jpg?",
+        "alt_text": "Pokkha Boeing1.jpg",
+        "sort_order": 1,
+        "is_primary": false,
+        "created_at": "2026-08-24T20:12:38.854971+00:00"
+      }
+    ]
+  }
+}

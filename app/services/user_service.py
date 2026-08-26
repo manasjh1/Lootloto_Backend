@@ -8,6 +8,8 @@ async def create_user(
     email_id: str,
     phone_number: int,
     password: str,
+    role: str = "buyer",
+    is_verified: bool = True,
 ) -> dict:
     db = get_db()
     try:
@@ -17,10 +19,13 @@ async def create_user(
             "email_id": email_id,
             "phone_number": phone_number,
             "password": password,
+            "role": role,
+            "is_verified": is_verified,
         }).execute()
         return res.data[0]
     except APIError as e:
         raise ValueError(str(e))
+
 
 
 async def create_profile(user_id: str) -> None:
