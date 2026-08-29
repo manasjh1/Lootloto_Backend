@@ -77,3 +77,42 @@ async def get_profile_by_user(user_id: str) -> dict | None:
 async def delete_user(uuid: str) -> None:
     db = get_db()
     db.table("users").delete().eq("uuid", uuid).execute()
+
+
+# ── Admin: user management ──────────────────────────────────
+
+ALLOWED_ROLES = {"buyer", "staff", "admin"}
+
+
+async def list_all_users() -> list[dict]:
+    """All user accounts, password hash excluded — for the admin user-management table."""
+    db = get_db()
+    res = (
+        db.table("users")
+        .select("uuid, first_name, last_name, email_id, phone_number, role, is_active, is_verified, created_at")
+        .order("created_at", desc=True)
+        .execute()
+    )
+    return res.data or []
+
+
+async def update_user_role(uuid: str, role: str) -> dict | None:
+    db = get_db()
+    res = (
+        db.table("users")
+        .update({"role": role})
+        .eq("uuid", uuid)
+        .execute()
+    )
+    return res.data[0] if res.data else None
+
+
+async def set_user_active_status(uuid: str, is_active: bool) -> dict | None:
+    db = get_db()
+    res = (
+        db.table("users")
+        .update({"is_active": is_active})
+        .eq("uuid", uuid)
+        .execute()
+    )
+    return res.data[0] if res.data else None

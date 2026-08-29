@@ -97,6 +97,47 @@ async def create_staff(body: StaffCreateIn, admin=Depends(require_admin)):
         raise HTTPException(status_code=400, detail=f"Failed to create staff user: {str(e)}")
 
 
+# ── Admin: user management ───────────────────────────────────
+
+class RoleUpdateIn(BaseModel):
+    role: str  # "buyer" | "staff" | "admin"
+
+class StatusUpdateIn(BaseModel):
+    is_active: bool
+
+
+@router.get("/admin/users")
+async def list_users(admin=Depends(require_admin)):
+    """List all user accounts (Admin only)."""
+    return await user_service.list_all_users()
+
+
+@router.patch("/admin/users/{uuid}/role")
+async def change_user_role(uuid: str, body: RoleUpdateIn, admin=Depends(require_admin)):
+    """Change a user's role (Admin only)."""
+    if body.role not in user_service.ALLOWED_ROLES:
+        raise HTTPException(status_code=400, detail="Role must be one of: buyer, staff, admin")
+    if uuid == admin["uuid"]:
+        raise HTTPException(status_code=400, detail="You cannot change your own role")
+
+    updated = await user_service.update_user_role(uuid, body.role)
+    if not updated:
+        raise HTTPException(status_code=404, detail="User not found")
+    return {"message": f"Role updated to {body.role}", "user": {"uuid": updated["uuid"], "role": updated["role"]}}
+
+
+@router.patch("/admin/users/{uuid}/status")
+async def change_user_status(uuid: str, body: StatusUpdateIn, admin=Depends(require_admin)):
+    """Activate or deactivate a user account (Admin only)."""
+    if uuid == admin["uuid"]:
+        raise HTTPException(status_code=400, detail="You cannot deactivate your own account")
+
+    updated = await user_service.set_user_active_status(uuid, body.is_active)
+    if not updated:
+        raise HTTPException(status_code=404, detail="User not found")
+    return {"message": "Status updated", "user": {"uuid": updated["uuid"], "is_active": updated["is_active"]}}
+
+
 
 # ── Verify OTP ────────────────────────────────────────────
 
