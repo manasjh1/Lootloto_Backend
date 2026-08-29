@@ -2,7 +2,7 @@ from postgrest.exceptions import APIError
 from app.core.config import settings
 from app.models.catalog import CategoryCreate, CategoryUpdate, ProductCreate, ProductUpdate, generate_slug
 from app.services.db import get_db
-
+import uuid
 
 # ── Categories Service ────────────────────────────────────
 
@@ -205,21 +205,37 @@ async def list_products(
 async def get_product_by_id(product_id: str) -> dict | None:
     db = get_db()
     try:
-        # Check by uuid first
-        res = db.table("products").select(
-            "*, category:categories(*), images:product_images(*)"
-        ).eq("uuid", product_id).execute()
+        product = None
 
-        if not res.data:
+        # Only query the uuid column if product_id is actually a valid UUID —
+        # Postgres's uuid type rejects non-UUID strings at the database level
+        # (raises, doesn't just return zero rows), which was breaking the
+        # slug fallback below whenever a slug like "jyfhghg" was passed in.
+        try:
+            uuid.UUID(product_id)
+            is_valid_uuid = True
+        except (ValueError, AttributeError, TypeError):
+            is_valid_uuid = False
+
+        # If the product_id is a valid UUID, query by uuid; otherwise, query by slug
+        if is_valid_uuid:
+            res = db.table("products").select(
+                "*, category:categories(*), images:product_images(*)"
+            ).eq("uuid", product_id).execute()
+            if res.data:
+                product = res.data[0]
+
+        if not product:
             # Try matching slug
             res = db.table("products").select(
                 "*, category:categories(*), images:product_images(*)"
             ).eq("slug", product_id).execute()
+            if res.data:
+                product = res.data[0]
 
-        if not res.data:
+        if not product:
             return None
 
-        product = res.data[0]
         if "images" in product and product["images"]:
             product["images"] = sorted(product["images"], key=lambda x: (not x.get("is_primary", False), x.get("sort_order", 0)))
         return product

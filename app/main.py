@@ -27,13 +27,9 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Route prefixes for Auth & Catalog APIs (supports /catalog, /api/catalog, and /api/products)
+# Route prefixes for Auth & Catalog APIs
 app.include_router(auth.router, prefix="/auth", tags=["auth"])
-app.include_router(auth.router, prefix="/api/auth", tags=["auth"])
-
 app.include_router(catalog.router, prefix="/catalog", tags=["catalog"])
-app.include_router(catalog.router, prefix="/api/catalog", tags=["catalog"])
-app.include_router(catalog.router, prefix="/api", tags=["catalog"])
 
 # Mount static directory for uploads and staff portal
 static_dir = os.path.join(os.path.dirname(__file__), "static")
