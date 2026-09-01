@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, Request, Response, status
 from pydantic import BaseModel, EmailStr
 
+from app.core.config import settings
 from app.core.deps import get_current_user
 from app.core.limiter import limiter
 from app.core.security import create_access_token, generate_raw_token, hash_password, verify_password
@@ -66,9 +67,10 @@ async def register(request: Request, body: RegisterIn):
 from app.core.deps import require_admin
 from app.models.rbac import StaffCreateIn
 
+VALID_ROLES = {"buyer", "staff", "admin"}
+
 @router.post("/admin/create-staff", status_code=status.HTTP_201_CREATED)
 async def create_staff(body: StaffCreateIn, admin=Depends(require_admin)):
-    """Super Admin creates a new Staff user account."""
     existing = await user_service.get_user_by_email(body.email_id)
     if existing:
         raise HTTPException(status_code=400, detail="User email already exists.")
@@ -95,6 +97,43 @@ async def create_staff(body: StaffCreateIn, admin=Depends(require_admin)):
         }
     except Exception as e:
         raise HTTPException(status_code=400, detail=f"Failed to create staff user: {str(e)}")
+
+
+@router.get("/admin/users")
+async def list_users(role: str | None = None, admin=Depends(require_admin)):
+    if role and role not in VALID_ROLES:
+        raise HTTPException(status_code=400, detail="Invalid role filter.")
+    return await user_service.list_users(role=role)
+
+
+class RoleUpdateIn(BaseModel):
+    role: str
+
+@router.patch("/admin/users/{uuid}/role")
+async def update_user_role(uuid: str, body: RoleUpdateIn, admin=Depends(require_admin)):
+    if body.role not in VALID_ROLES:
+        raise HTTPException(status_code=400, detail=f"Invalid role. Must be one of: {', '.join(VALID_ROLES)}")
+    if uuid == admin["uuid"]:
+        raise HTTPException(status_code=400, detail="Cannot change your own role.")
+    target = await user_service.get_user_by_id(uuid)
+    if not target:
+        raise HTTPException(status_code=404, detail="User not found.")
+    updated = await user_service.update_user_role(uuid, body.role)
+    return {"message": f"Role updated to '{body.role}'.", "user": updated}
+
+
+class StatusUpdateIn(BaseModel):
+    is_active: bool
+
+@router.patch("/admin/users/{uuid}/status")
+async def update_user_status(uuid: str, body: StatusUpdateIn, admin=Depends(require_admin)):
+    if uuid == admin["uuid"]:
+        raise HTTPException(status_code=400, detail="Cannot deactivate your own account.")
+    target = await user_service.get_user_by_id(uuid)
+    if not target:
+        raise HTTPException(status_code=404, detail="User not found.")
+    updated = await user_service.update_user_status(uuid, body.is_active)
+    return {"message": f"Account {'activated' if body.is_active else 'deactivated'}.", "user": updated}
 
 
 
@@ -156,7 +195,7 @@ async def login(request: Request, body: LoginIn, response: Response):
     )
     response.set_cookie(
         "refresh_token", raw,
-        httponly=True, secure=True, samesite="lax",
+        httponly=True, secure=settings.COOKIE_SECURE, samesite="lax",
         max_age=60 * 60 * 24 * 7,
     )
     return {
@@ -211,7 +250,7 @@ async def refresh(request: Request, response: Response):
     )
     response.set_cookie(
         "refresh_token", new_raw,
-        httponly=True, secure=True, samesite="lax",
+        httponly=True, secure=settings.COOKIE_SECURE, samesite="lax",
         max_age=60 * 60 * 24 * 7,
     )
     return {"access_token": create_access_token(user["uuid"], user["role"]), "token_type": "bearer"}

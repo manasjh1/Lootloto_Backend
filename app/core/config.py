@@ -6,6 +6,7 @@ class Settings(BaseSettings):
     # App
     DEBUG: bool = False
     ALLOWED_ORIGINS: List[str] = ["http://localhost:5173"]
+    COOKIE_SECURE: bool = False  # set True once served over HTTPS
 
     # Database
     SUPABASE_URL: str
