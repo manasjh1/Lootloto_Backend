@@ -355,5 +355,5 @@ async def upload_image_file(file_bytes: bytes, original_filename: str, content_t
     with open(file_path, "wb") as f:
         f.write(file_bytes)
 
-    return f"/static/uploads/{unique_name}"
+    return f"{settings.BACKEND_URL}/static/uploads/{unique_name}"
 

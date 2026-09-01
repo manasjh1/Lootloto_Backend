@@ -24,6 +24,7 @@ class Settings(BaseSettings):
     BREVO_SENDER_EMAIL: str = "noreply@lootlooto.com"
     BREVO_SENDER_NAME: str = "LootLooto"
     FRONTEND_URL: str = "http://localhost:5173"
+    BACKEND_URL: str = "http://localhost:8000"  # public origin of this API, used to build absolute URLs for locally-stored files
 
     class Config:
         env_file = ".env"
